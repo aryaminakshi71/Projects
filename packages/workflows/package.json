@@ -1,0 +1,17 @@
+{
+  "name": "@projects/workflows",
+  "version": "0.0.1",
+  "description": "Cloudflare Workflows stub - uncomment to enable",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@projects/tsconfig": "workspace:*",
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "typescript": "^5.9.3"
+  }
+}

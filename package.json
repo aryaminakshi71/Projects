@@ -1,0 +1,34 @@
+{
+  "name": "@projects/platform",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Projects Platform - Project Management SaaS",
+  "author": "Arya Labs",
+  "license": "PROPRIETARY",
+  "packageManager": "bun@1.3.5",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:no-cloudflare": "cd apps/web && SKIP_CLOUDFLARE=true bun run dev",
+    "typecheck": "turbo run typecheck",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check --write .",
+    "clean": "rm -rf node_modules .turbo && find . -name 'node_modules' -type d -prune -exec rm -rf {} + && find . -name '.turbo' -type d -prune -exec rm -rf {} +",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "db:migrate": "turbo run db:migrate",
+    "db:studio": "turbo run db:studio"
+  },
+  "devDependencies": {
+    "@clack/prompts": "^0.11.0",
+    "turbo": "^2.4.4"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
