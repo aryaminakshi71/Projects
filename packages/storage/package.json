@@ -13,11 +13,13 @@
     ".": "./src/index.ts",
     "./db": "./src/db/index.ts",
     "./schema": "./src/db/schema/index.ts",
+    "./redis": "./src/redis/index.ts",
     "./r2": "./src/r2/index.ts"
   },
   "dependencies": {
     "@projects/env": "workspace:*",
     "@neondatabase/serverless": "^0.10.0",
+    "@upstash/redis": "^1.36.1",
     "drizzle-orm": "^0.45.0",
     "nanoid": "^5.1.6",
     "zod": "^4.1.13"

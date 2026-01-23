@@ -35,7 +35,15 @@ export function createDb(
   // Optimize Neon for Cloudflare Workers
   neonConfig.fetchConnectionCache = true;
   
+  // Connection pooling configuration
+  // Note: @neondatabase/serverless uses HTTP connections, not traditional pooling
+  // But we can configure fetch options for better performance
+  neonConfig.pipelineConnect = false; // Disable pipelining for better compatibility
+  neonConfig.pipelineTLS = false;
+  
   // drizzle-orm/neon-serverless accepts connection string directly
+  // For connection pooling, Neon serverless handles it automatically
+  // Max connections are managed by Neon's serverless proxy
   return drizzle(url, { schema });
 }
 
