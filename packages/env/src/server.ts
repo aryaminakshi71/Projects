@@ -87,3 +87,4 @@ export type ServerEnv = z.infer<typeof serverSchema>;
  * via Hono context (c.env.*), not through this module.
  */
 export const env: ServerEnv = serverSchema.parse(cfEnv);
+// export const env: ServerEnv = serverSchema.parse(process.env);

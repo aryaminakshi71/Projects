@@ -14,8 +14,52 @@ const config = defineConfig({
       "@projects/auth",
       "@projects/core",
       "@projects/storage",
-      "@projects/logger",
+      "@orpc/client",
+      "@tanstack/react-query",
+      "@tanstack/react-router",
     ],
+    // Exclude problematic packages from optimization
+    exclude: ["@tanstack/react-router-devtools"],
+  },
+  build: {
+    // Optimize build output
+    target: "esnext",
+    minify: "esbuild",
+    sourcemap: false, // Disable sourcemaps in production for smaller bundles
+    rollupOptions: {
+      output: {
+        // Better chunk splitting for code splitting
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'tanstack-vendor': [
+            '@tanstack/react-query',
+            '@tanstack/react-router',
+            '@tanstack/react-start',
+          ],
+          'orpc-vendor': ['@orpc/client', '@orpc/tanstack-query'],
+        },
+      },
+    },
+    // Increase chunk size warning limit (default is 500kb)
+    chunkSizeWarningLimit: 1000,
+  },
+  server: {
+    port: 3005,
+    // Proxy API requests to avoid server-side handler issues
+    // Note: In development, API runs on port 3001 via apps/api/src/server.ts
+    // Proxy removed to avoid self-proxying loop. API is handled by api.$.ts route.
+    // proxy: {
+    //   '/api': {
+    //     target: process.env.API_URL || 'http://localhost:3001',
+    //     changeOrigin: true,
+    //     secure: false,
+    //     configure: (proxy, _options) => {
+    //       proxy.on('error', (err, _req, res) => {
+    //         console.log('proxy error', err);
+    //       });
+    //     },
+    //   },
+    // },
   },
   plugins: [
     // Path aliases from tsconfig
@@ -26,7 +70,7 @@ const config = defineConfig({
     // Only include if not skipping Cloudflare (for testing routes without Cloudflare services)
     // Note: If remote API fails, use SKIP_CLOUDFLARE=true to run without Cloudflare features
     ...(process.env.SKIP_CLOUDFLARE !== 'true' ? [
-      cloudflare({ 
+      cloudflare({
         viteEnvironment: { name: 'ssr' },
         persist: true,
         // Try to use local mode - may still attempt remote API call

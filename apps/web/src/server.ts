@@ -31,12 +31,20 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<Response> {
-    // Type assertion needed because module augmentation isn't fully applied
-    // until vite dev/build generates the complete route tree
-    return handler.fetch(request, {
-      context: {
-        cloudflare: { env, ctx },
-      },
-    } as Parameters<typeof handler.fetch>[1]);
+    try {
+      console.log("[server.ts] Handling request:", request.url);
+
+      // Type assertion needed because module augmentation isn't fully applied
+      // until vite dev/build generates the complete route tree
+      return await handler.fetch(request, {
+        context: {
+          cloudflare: { env, ctx },
+        },
+        // Pass the request context to the server functions
+      } as Parameters<typeof handler.fetch>[1]);
+    } catch (error) {
+      console.error("[server.ts] Error handling request:", error);
+      return new Response("Internal Server Error", { status: 500 });
+    }
   },
 };
