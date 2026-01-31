@@ -29,8 +29,8 @@ const config = defineConfig({
     rollupOptions: {
       output: {
         // Better chunk splitting for code splitting
+        // Note: React/React-DOM are external in SSR builds, so don't include them in manualChunks
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
           'tanstack-vendor': [
             '@tanstack/react-query',
             '@tanstack/react-router',
