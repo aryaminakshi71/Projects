@@ -29,15 +29,10 @@ const config = defineConfig({
     rollupOptions: {
       output: {
         // Better chunk splitting for code splitting
-        // Note: React/React-DOM are external in SSR builds, so don't include them in manualChunks
-        manualChunks: {
-          'tanstack-vendor': [
-            '@tanstack/react-query',
-            '@tanstack/react-router',
-            '@tanstack/react-start',
-          ],
-          'orpc-vendor': ['@orpc/client', '@orpc/tanstack-query'],
-        },
+        // Note: React, TanStack packages, and ORPC are external in SSR builds,
+        // so don't include them in manualChunks to avoid conflicts
+        // Vite will handle chunking automatically for client builds
+        manualChunks: undefined,
       },
     },
     // Increase chunk size warning limit (default is 500kb)
