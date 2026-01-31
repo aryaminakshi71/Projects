@@ -48,6 +48,58 @@ export function createApp() {
     });
   });
 
+  // Direct R2 upload route
+  app.post("/api/assets/upload", async (c: any) => {
+    // Basic auth check (can be improved by using middleware)
+    const authHeader = c.req.header("Authorization");
+    if (!authHeader && (c.env.NODE_ENV === "production")) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const body = await c.req.parseBody();
+    const file = body.file as File;
+
+    if (!file) {
+      return c.json({ error: "No file uploaded" }, 400);
+    }
+
+    const key = `${crypto.randomUUID()}-${file.name}`;
+
+    if (c.env.BUCKET) {
+      await c.env.BUCKET.put(key, await file.arrayBuffer(), {
+        httpMetadata: { contentType: file.type },
+      });
+
+      // In a real app, you'd have a custom domain for R2
+      // For demo, we'll return a path that our worker can serve or a public R2 URL
+      const url = `${c.env.VITE_PUBLIC_SITE_URL}/api/assets/raw/${key}`;
+      return c.json({ url, key });
+    }
+
+    // Fallback for local dev without R2
+    return c.json({
+      url: `https://picsum.photos/seed/${Math.random().toString(36).substring(7)}/1200/800`,
+      key: "mock-key",
+      message: "R2 Bucket not found, using mock URL"
+    });
+  });
+
+  // Serve raw assets from R2
+  app.get("/api/assets/raw/:key", async (c: any) => {
+    const key = c.req.param("key");
+    if (c.env.BUCKET) {
+      const object = await c.env.BUCKET.get(key);
+      if (!object) return c.notFound();
+
+      const headers = new Headers();
+      object.writeHttpMetadata(headers);
+      headers.set("etag", object.httpEtag);
+
+      return new Response(object.body, { headers });
+    }
+    return c.notFound();
+  });
+
   // Better Auth handler (includes Stripe webhook at /api/auth/stripe/webhook)
   app.on(["GET", "POST"], "/api/auth/*", async (c: any) => {
     // Fallback to process.env when running without Cloudflare Workers

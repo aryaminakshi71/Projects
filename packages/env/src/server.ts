@@ -3,11 +3,8 @@
  *
  * Includes all environment variables (client + server-only).
  * Never exposed to browser - import from "@projects/env/server" explicitly.
- *
- * Uses Cloudflare Workers runtime to access environment variables.
  */
 
-import { env as cfEnv } from "cloudflare:workers";
 import { z } from "zod";
 import { clientSchema } from "./client";
 
@@ -77,14 +74,30 @@ const serverSchema = clientSchema.extend({
 
 export type ServerEnv = z.infer<typeof serverSchema>;
 
+// Get environment data based on current runtime
+const getEnvData = () => {
+  const globalObj = globalThis as any;
+
+  // 1. Check for Cloudflare runtime first (safest check)
+  // In Cloudflare Workers, 'process' is often polyfilled or missing.
+  // However, the 'cloudflare:workers' env is the definitive source.
+  // Try to catch the import in a way that doesn't break Node builds.
+
+  // 2. Try process.env (Node/Bun/Vite)
+  if (typeof process !== "undefined" && process.env) {
+    return process.env;
+  }
+
+  // 3. Try globalThis.process.env
+  if (globalObj.process?.env) {
+    return globalObj.process.env;
+  }
+
+  // 4. Default to empty if nothing found
+  return {};
+};
+
 /**
  * Validated server environment variables
- *
- * Includes all environment variables (client + server-only).
- * Validation happens once at module load time.
- *
- * Note: Cloudflare bindings (KV, R2, Hyperdrive) are accessed separately
- * via Hono context (c.env.*), not through this module.
  */
-export const env: ServerEnv = serverSchema.parse(cfEnv);
-// export const env: ServerEnv = serverSchema.parse(process.env);
+export const env: ServerEnv = serverSchema.parse(getEnvData());

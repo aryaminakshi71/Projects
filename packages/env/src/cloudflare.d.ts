@@ -5,5 +5,8 @@
 // Placeholder interface for typecheck when wrangler types hasn't been run
 // This will be replaced by wrangler types command
 export interface Env {
+  DATABASE: { connectionString: string };
+  BUCKET: R2Bucket;
+  AI: any;
   [key: string]: unknown;
 }

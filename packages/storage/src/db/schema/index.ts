@@ -9,3 +9,4 @@ export * from "./auth.schema";
 
 // Projects-specific schemas
 export * from "./projects.schema";
+export * from "./assets.schema";

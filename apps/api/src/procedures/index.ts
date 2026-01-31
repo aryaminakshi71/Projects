@@ -43,7 +43,7 @@ export const authed = base.use<AuthContext>(async ({ context, next }) => {
     // Create a mock auth context for demo mode
     const db = getDb(context);
     const auth = createAuthFromEnv(db, context.env);
-    
+
     // Return demo context with mock user and session
     return next({
       context: {
@@ -111,6 +111,26 @@ export const orgAuthed = authed.use<OrgContext>(async ({ context, next }) => {
   const orgId = context.headers.get("x-organization-id");
 
   if (!orgSlug && !orgId) {
+    // Check if we are in demo mode (inherited from authed middleware)
+    const isDemo = context.headers.get("x-demo-mode") === "true";
+    if (isDemo) {
+      return next({
+        context: {
+          ...context,
+          organization: {
+            id: "demo-org",
+            name: "Demo Organization",
+            slug: "demo",
+            plan: "pro",
+          },
+          member: {
+            id: "demo-member-001",
+            role: "owner",
+          },
+        },
+      });
+    }
+
     throw new ORPCError("BAD_REQUEST", {
       message: "Organization identifier required (x-organization-slug or x-organization-id header)",
     });
@@ -156,7 +176,7 @@ export const orgAuthed = authed.use<OrgContext>(async ({ context, next }) => {
   // Ensure slug is not null and role matches expected type
   const org = result[0].organization;
   const mem = result[0].member;
-  
+
   return next({
     context: {
       ...context,
@@ -168,8 +188,8 @@ export const orgAuthed = authed.use<OrgContext>(async ({ context, next }) => {
       },
       member: {
         id: mem.id,
-        role: (mem.role === 'owner' || mem.role === 'admin' || mem.role === 'member') 
-          ? mem.role 
+        role: (mem.role === 'owner' || mem.role === 'admin' || mem.role === 'member')
+          ? mem.role
           : 'member' as "owner" | "admin" | "member",
       },
     },

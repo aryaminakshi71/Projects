@@ -10,7 +10,7 @@ export const Route = createFileRoute("/app/projects")({
 
 function ProjectsPage() {
   const { data, isLoading, error } = useQuery(
-    api.projects.list.useQuery({
+    api.projects.list.queryOptions({
       limit: 50,
       offset: 0,
     })
