@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --env-file=../../.env src/dev.ts",
+    "dev": "echo 'API is integrated into web app. Use: bun run dev in root to start web+api together'",
+    "dev:standalone": "bun --env-file=../../.env src/dev.ts",
     "typecheck": "tsc --noEmit"
   },
   "exports": {

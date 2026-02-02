@@ -10,6 +10,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PostHogProvider } from '@/components/providers/posthog-provider'
 import { ErrorPage, NotFoundPage } from '@/components/error'
 import { generateOrganizationSchema, generateWebSiteSchema, getProjectsOrganizationSchema } from '@/lib/structured-data'
+import { registerServiceWorker } from '@/lib/service-worker'
+import { useEffect } from 'react'
 
 const queryClient = new QueryClient()
 
@@ -41,6 +43,11 @@ export const Route = createRootRoute({
 })
 
 function RootDocument() {
+  // Register service worker for offline support
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
+
   const organizationSchema = generateOrganizationSchema(getProjectsOrganizationSchema())
   const websiteSchema = generateWebSiteSchema({
     name: 'Projects Management',

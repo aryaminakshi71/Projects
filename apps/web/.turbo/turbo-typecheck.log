@@ -1,87 +1,9 @@
-
-[0m[2m[35m$[0m [2m[1mtsc --noEmit[0m
-[96msrc/components/auth/login-form.tsx[0m:[93m50[0m:[93m18[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ to: string; }' is not assignable to parameter of type 'NavigateOptions<unknown, string, "/app", string, "">'.
-  Property 'search' is missing in type '{ to: string; }' but required in type 'MakeRequiredSearchParams<unknown, string, "/app">'.
-
-[7m50[0m         navigate({ to: "/app" });
-[7m  [0m [91m                 ~~~~~~~~~~~~~~[0m
-
-  [96m../../node_modules/@tanstack/router-core/dist/esm/link.d.ts[0m:[93m152[0m:[93m5[0m
-    [7m152[0m     search: MakeRequiredParamsReducer<TRouter, 'SEARCH', TFrom, TTo> & {};
-    [7m   [0m [96m    ~~~~~~[0m
-    'search' is declared here.
-
-[96msrc/components/auth/signup-form.tsx[0m:[93m60[0m:[93m18[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ to: string; }' is not assignable to parameter of type 'NavigateOptions<unknown, string, "/app", string, "">'.
-  Property 'search' is missing in type '{ to: string; }' but required in type 'MakeRequiredSearchParams<unknown, string, "/app">'.
-
-[7m60[0m         navigate({ to: "/app" });
-[7m  [0m [91m                 ~~~~~~~~~~~~~~[0m
-
-  [96m../../node_modules/@tanstack/router-core/dist/esm/link.d.ts[0m:[93m152[0m:[93m5[0m
-    [7m152[0m     search: MakeRequiredParamsReducer<TRouter, 'SEARCH', TFrom, TTo> & {};
-    [7m   [0m [96m    ~~~~~~[0m
-    'search' is declared here.
-
-[96msrc/components/ui/sonner.tsx[0m:[93m4[0m:[93m23[0m - [91merror[0m[90m TS2724: [0m'"lucide-react"' has no exported member named 'CircleInfo'. Did you mean 'CircleIcon'?
-
-[7m4[0m import { CircleCheck, CircleInfo, AlertTriangle, CircleX, Loader2 } from "lucide-react"
-[7m [0m [91m                      ~~~~~~~~~~[0m
-
-[96msrc/lib/api.ts[0m:[93m13[0m:[93m43[0m - [91merror[0m[90m TS2344: [0mType '{ health: { check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>; }; projects: { ...; }; }' does not satisfy the constraint 'NestedClient<any>'.
-  Type '{ health: { check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>; }; projects: { ...; }; }' is not assignable to type '{ [k: string]: NestedClient<any>; }'.
-    Property 'health' is incompatible with index signature.
-      Type '{ check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, z.ZodObject<{ status: z.ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: z.ZodString; version: z.ZodString; }, z.core.$strip>, Record<...>, Record<...>>; }' is not assignable to type 'NestedClient<any>'.
-        Type '{ check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, z.ZodObject<{ status: z.ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: z.ZodString; version: z.ZodString; }, z.core.$strip>, Record<...>, Record<...>>; }' is not assignable to type '{ [k: string]: NestedClient<any>; }'.
-          Property 'check' is incompatible with index signature.
-            Type 'DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>' is not assignable to type 'NestedClient<any>'.
-              Type 'DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>' is not assignable to type '{ [k: string]: NestedClient<any>; }'.
-                Index signature for type 'string' is missing in type 'DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>'.
-
-[7m13[0m export const apiClient = createORPCClient<AppRouter>({
-[7m  [0m [91m                                          ~~~~~~~~~[0m
-
-[96msrc/lib/api.ts[0m:[93m27[0m:[93m45[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ health: { check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>; }; projects: { ...; }; }' is not assignable to parameter of type 'NestedClient<any>'.
-  Type '{ health: { check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>; }; projects: { ...; }; }' is not assignable to type '{ [k: string]: NestedClient<any>; }'.
-    Property 'health' is incompatible with index signature.
-      Type '{ check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, z.ZodObject<{ status: z.ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: z.ZodString; version: z.ZodString; }, z.core.$strip>, Record<...>, Record<...>>; }' is not assignable to type 'NestedClient<any>'.
-        Type '{ check: DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, z.ZodObject<{ status: z.ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: z.ZodString; version: z.ZodString; }, z.core.$strip>, Record<...>, Record<...>>; }' is not assignable to type '{ [k: string]: NestedClient<any>; }'.
-          Property 'check' is incompatible with index signature.
-            Type 'DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>' is not assignable to type 'NestedClient<any>'.
-              Type 'DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>' is not assignable to type '{ [k: string]: NestedClient<any>; }'.
-                Index signature for type 'string' is missing in type 'DecoratedProcedure<InitialContext & Record<never, never>, InitialContext, Schema<unknown, unknown>, ZodObject<{ status: ZodEnum<{ error: "error"; ok: "ok"; }>; timestamp: ZodString; version: ZodString; }, $strip>, Record<...>, Record<...>>'.
-
-[7m27[0m export const api = createTanstackQueryUtils(apiClient);
-[7m  [0m [91m                                            ~~~~~~~~~[0m
-
-[96msrc/routes/app/projects.tsx[0m:[93m13[0m:[93m9[0m - [91merror[0m[90m TS2339: [0mProperty 'projects' does not exist on type '(ProcedureUtils<any, any, any, any> & GeneralUtils<any>) | ({ [x: string]: (ProcedureUtils<any, any, any, any> & GeneralUtils<any>) | (... & GeneralUtils<...>); } & GeneralUtils<...>)'.
-  Property 'projects' does not exist on type 'ProcedureUtils<any, any, any, any> & GeneralUtils<any>'.
-
-[7m13[0m     api.projects.list.useQuery({
-[7m  [0m [91m        ~~~~~~~~[0m
-
-[96msrc/routes/app/projects.tsx[0m:[93m26[0m:[93m16[0m - [91merror[0m[90m TS2339: [0mProperty 'projects' does not exist on type '{}'.
-
-[7m26[0m         {data?.projects?.map((project: any) => (
-[7m  [0m [91m               ~~~~~~~~[0m
-
-[96msrc/server.ts[0m:[93m21[0m:[93m5[0m - [91merror[0m[90m TS2717: [0mSubsequent property declarations must have the same type.  Property 'config' must be of type 'StartInstanceOptions<[], true, [], []>', but here has type 'StartInstanceOptions<[], true, [], []> | Promise<StartInstanceOptions<[], true, [], []>>'.
-
-[7m21[0m     config: ReturnType<typeof startInstance.getOptions>;
-[7m  [0m [91m    ~~~~~~[0m
-
-  [96msrc/routeTree.gen.ts[0m:[93m177[0m:[93m5[0m
-    [7m177[0m     config: Awaited<ReturnType<typeof startInstance.getOptions>>
-    [7m   [0m [96m    ~~~~~~[0m
-    'config' was also declared here.
-
-
-Found 8 errors in 6 files.
-
-Errors  Files
-     1  src/components/auth/login-form.tsx[90m:50[0m
-     1  src/components/auth/signup-form.tsx[90m:60[0m
-     1  src/components/ui/sonner.tsx[90m:4[0m
-     2  src/lib/api.ts[90m:13[0m
-     2  src/routes/app/projects.tsx[90m:13[0m
-     1  src/server.ts[90m:21[0m
-[0m[31merror[0m[2m:[0m script [1m"typecheck"[0m exited with code 1[0m
+$ tsc --noEmit
+src/components/auth/login-form.tsx(50,32): error TS2322: Type '{}' is not assignable to type 'ParamsReducerFn<unknown, "SEARCH", string, "/app">'.
+  Type '{}' provides no match for the signature '(current: never): never'.
+src/components/auth/signup-form.tsx(60,32): error TS2322: Type '{}' is not assignable to type 'ParamsReducerFn<unknown, "SEARCH", string, "/app">'.
+  Type '{}' provides no match for the signature '(current: never): never'.
+src/components/lazy-loading.tsx(6,20): error TS1484: 'ComponentType' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/ui/toaster.tsx(3,26): error TS2307: Cannot find module '@/hooks/use-toast' or its corresponding type declarations.
+src/components/ui/toaster.tsx(18,31): error TS7031: Binding element 'id' implicitly has an 'any' type.
+src/components/ui/toaster.tsx(18,35): error TS7031: Binding element 'title' implicitly has an 'any' type.

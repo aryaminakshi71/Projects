@@ -5,6 +5,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
+import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
 
 export default defineConfig(({ mode }) => {
@@ -56,6 +57,14 @@ export default defineConfig(({ mode }) => {
         server: { entry: "./server.ts" },
       }),
       viteReact(),
+      // Bundle analyzer (only in production builds when ANALYZE=true)
+      process.env.ANALYZE === 'true' && visualizer({
+        filename: './dist/stats.html',
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+        template: 'treemap',
+      }),
     ],
   };
 })
