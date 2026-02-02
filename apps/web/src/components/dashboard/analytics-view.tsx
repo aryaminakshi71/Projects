@@ -1,30 +1,18 @@
 "use client"
 
-import React from "react"
+import React, { lazy, Suspense } from "react"
 
 import { useStore } from "@/lib/productivity-store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-} from "recharts"
+import { ComponentLoadingSkeleton } from "@/components/lazy-loading"
+
+// Lazy load chart components
+const ProductivityTrendChart = lazy(() => import("@/components/charts/productivity-trend-chart").then(m => ({ default: m.ProductivityTrendChart })));
+const TaskDistributionChart = lazy(() => import("@/components/charts/task-distribution-chart").then(m => ({ default: m.TaskDistributionChart })));
+const TeamPerformanceChart = lazy(() => import("@/components/charts/team-performance-chart").then(m => ({ default: m.TeamPerformanceChart })));
+const FocusTimeChart = lazy(() => import("@/components/charts/focus-time-chart").then(m => ({ default: m.FocusTimeChart })));
 import {
   TrendingUp,
   TrendingDown,
@@ -169,61 +157,9 @@ export function AnalyticsView() {
             <CardTitle>Productivity Trend</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={weeklyData}>
-                  <defs>
-                    <linearGradient id="colorTasks" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="5%"
-                        stopColor="var(--chart-1)"
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor="var(--chart-1)"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                    <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="5%"
-                        stopColor="var(--chart-2)"
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor="var(--chart-2)"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <XAxis
-                    dataKey="day"
-                    stroke="var(--muted-foreground)"
-                    fontSize={12}
-                  />
-                  <YAxis stroke="var(--muted-foreground)" fontSize={12} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area
-                    type="monotone"
-                    dataKey="tasks"
-                    stroke="var(--chart-1)"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#colorTasks)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="hours"
-                    stroke="var(--chart-2)"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#colorHours)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <Suspense fallback={<ComponentLoadingSkeleton />}>
+              <ProductivityTrendChart data={weeklyData} chartConfig={chartConfig} />
+            </Suspense>
           </CardContent>
         </Card>
 
@@ -233,26 +169,9 @@ export function AnalyticsView() {
             <CardTitle>Task Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {statusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <Suspense fallback={<ComponentLoadingSkeleton />}>
+              <TaskDistributionChart data={statusData} chartConfig={chartConfig} />
+            </Suspense>
             <div className="mt-4 space-y-2">
               {statusData.map((item) => (
                 <div
@@ -284,26 +203,9 @@ export function AnalyticsView() {
             <CardTitle>Team Performance</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[250px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={teamProductivity} layout="vertical">
-                  <XAxis type="number" stroke="var(--muted-foreground)" fontSize={12} />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    stroke="var(--muted-foreground)"
-                    fontSize={12}
-                    width={60}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar
-                    dataKey="completed"
-                    fill="var(--chart-1)"
-                    radius={[0, 4, 4, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <Suspense fallback={<ComponentLoadingSkeleton />}>
+              <TeamPerformanceChart data={teamProductivity} chartConfig={chartConfig} />
+            </Suspense>
           </CardContent>
         </Card>
 
@@ -377,26 +279,9 @@ export function AnalyticsView() {
 
             {/* Focus Chart */}
             <div className="lg:col-span-3">
-              <ChartContainer config={chartConfig} className="h-[200px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={weeklyData}>
-                    <XAxis
-                      dataKey="day"
-                      stroke="var(--muted-foreground)"
-                      fontSize={12}
-                    />
-                    <YAxis stroke="var(--muted-foreground)" fontSize={12} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line
-                      type="monotone"
-                      dataKey="focus"
-                      stroke="var(--chart-3)"
-                      strokeWidth={2}
-                      dot={{ fill: "var(--chart-3)", strokeWidth: 2 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
+              <Suspense fallback={<ComponentLoadingSkeleton />}>
+                <FocusTimeChart data={weeklyData} chartConfig={chartConfig} />
+              </Suspense>
             </div>
           </div>
         </CardContent>

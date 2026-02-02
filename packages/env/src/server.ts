@@ -36,7 +36,7 @@ const serverSchema = clientSchema.extend({
   // Uses REST API naming convention expected by @upstash/redis fromEnv()
   // ============================================================================
 
-  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_URL: z.string().url().or(z.literal("")).optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
   // ============================================================================
@@ -50,7 +50,7 @@ const serverSchema = clientSchema.extend({
   // MONITORING (Sentry)
   // ============================================================================
 
-  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_DSN: z.string().url().or(z.literal("")).optional(),
   SENTRY_ENVIRONMENT: z.string().optional(),
   SENTRY_DEBUG: z.string().optional(),
 
@@ -67,7 +67,7 @@ const serverSchema = clientSchema.extend({
   // LOG AGGREGATION
   // ============================================================================
 
-  LOG_AGGREGATION_ENDPOINT: z.string().url().optional(),
+  LOG_AGGREGATION_ENDPOINT: z.string().url().or(z.literal("")).optional(),
   LOG_AGGREGATION_API_KEY: z.string().optional(),
   LOG_AGGREGATION_SERVICE: z.enum(["datadog", "logtail", "cloudwatch", "custom"]).optional(),
 });

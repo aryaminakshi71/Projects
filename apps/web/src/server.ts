@@ -1,4 +1,5 @@
 import handler from "@tanstack/react-start/server-entry";
+import { api } from "@projects/api/app";
 import type { getRouter } from "./router";
 import type { startInstance } from "./start";
 import type { Env } from "@projects/env/cloudflare";
@@ -32,7 +33,12 @@ export default {
     ctx: ExecutionContext
   ): Promise<Response> {
     try {
-      console.log("[server.ts] Handling request:", request.url);
+      // console.log("[server.ts] Handling request:", request.url);
+      const url = new URL(request.url);
+
+      if (url.pathname.startsWith("/api")) {
+        return api.fetch(request, env as any, ctx);
+      }
 
       // Type assertion needed because module augmentation isn't fully applied
       // until vite dev/build generates the complete route tree

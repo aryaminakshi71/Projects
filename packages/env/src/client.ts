@@ -27,7 +27,7 @@ export const clientSchema = z.object({
     .optional()
     .default("https://us.i.posthog.com"),
   // CDN URL for optimized images (Cloudflare R2 or Images)
-  VITE_PUBLIC_CDN_URL: z.string().url().optional(),
+  VITE_PUBLIC_CDN_URL: z.string().url().or(z.literal("")).optional(),
 });
 
 export type ClientEnv = z.infer<typeof clientSchema>;
