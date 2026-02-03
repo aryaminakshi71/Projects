@@ -11,6 +11,7 @@ import { PostHogProvider } from '@/components/providers/posthog-provider'
 import { ErrorPage, NotFoundPage } from '@/components/error'
 import { generateOrganizationSchema, generateWebSiteSchema, getProjectsOrganizationSchema } from '@/lib/structured-data'
 import { registerServiceWorker } from '@/lib/service-worker'
+import { addSkipLink } from '@/lib/accessibility'
 import { useEffect } from 'react'
 
 const queryClient = new QueryClient()
@@ -46,6 +47,8 @@ function RootDocument() {
   // Register service worker for offline support
   useEffect(() => {
     registerServiceWorker();
+    // Add skip link for accessibility
+    addSkipLink("main-content", "Skip to main content");
   }, []);
 
   const organizationSchema = generateOrganizationSchema(getProjectsOrganizationSchema())
@@ -81,7 +84,7 @@ function RootDocument() {
         </a>
         <PostHogProvider>
           <QueryClientProvider client={queryClient}>
-            <main id="main-content">
+            <main id="main-content" tabIndex={-1}>
               <Outlet />
             </main>
             <Toaster position="top-right" richColors />
