@@ -32,25 +32,19 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<Response> {
-    try {
-      // console.log("[server.ts] Handling request:", request.url);
-      const url = new URL(request.url);
+    const url = new URL(request.url);
 
-      if (url.pathname.startsWith("/api")) {
-        return api.fetch(request, env as any, ctx);
-      }
-
-      // Type assertion needed because module augmentation isn't fully applied
-      // until vite dev/build generates the complete route tree
-      return await handler.fetch(request, {
-        context: {
-          cloudflare: { env, ctx },
-        },
-        // Pass the request context to the server functions
-      } as Parameters<typeof handler.fetch>[1]);
-    } catch (error) {
-      console.error("[server.ts] Error handling request:", error);
-      return new Response("Internal Server Error", { status: 500 });
+    if (url.pathname.startsWith("/api")) {
+      return api.fetch(request, env as any, ctx);
     }
+
+    // Type assertion needed because module augmentation isn't fully applied
+    // until vite dev/build generates the complete route tree
+    return handler.fetch(request, {
+      context: {
+        cloudflare: { env, ctx },
+      },
+      // Pass the request context to the server functions
+    } as Parameters<typeof handler.fetch>[1]);
   },
 };

@@ -17,27 +17,24 @@ interface RateLimitOptions {
   limiterType?: "api" | "auth" | "strict";
 }
 
-// Default rate limiters
 const defaultLimiters = {
-  api: {
-    windowSeconds: 60,
-    maxRequests: 100,
-  },
-  auth: {
-    windowSeconds: 60,
-    maxRequests: 10,
-  },
-  strict: {
-    windowSeconds: 60,
-    maxRequests: 5,
-  },
+  api: { windowSeconds: 60, maxRequests: 100 },
+  auth: { windowSeconds: 60, maxRequests: 10 },
+  strict: { windowSeconds: 60, maxRequests: 5 },
 };
 
-// Create rate limiters if Redis is available
 const createRateLimiter = (type: "api" | "auth" | "strict") => {
-  // Check if Redis client is available (from @projects/storage/redis)
   const redisClient = redis.client;
-  if (!redisClient) return null;
+  // Check if Redis client is a no-op client (not configured)
+  // No-op clients return null or have a specific property
+  if (!redisClient || (redisClient as any).__noop) return null;
+  
+  // Additional check: if Redis URL is empty or invalid, don't create limiter
+  const url = process.env.UPSTASH_REDIS_REST_URL || "";
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || "";
+  if (!url || !token || url.trim() === "" || token.trim() === "") {
+    return null;
+  }
   
   const config = defaultLimiters[type];
   return new Ratelimit({
@@ -54,7 +51,6 @@ const rateLimiters = {
   strict: createRateLimiter("strict"),
 };
 
-// Fallback in-memory store
 const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
 
 export function rateLimitRedis(options: Partial<RateLimitOptions> = {}) {
@@ -73,38 +69,47 @@ export function rateLimitRedis(options: Partial<RateLimitOptions> = {}) {
   return async (c: Context, next: Next) => {
     const key = opts.keyGenerator!(c);
     
-    // Try Redis-based rate limiting first
     if (opts.limiterType && rateLimiters[opts.limiterType]) {
       const limiter = rateLimiters[opts.limiterType]!;
-      const result = await limiter.limit(key);
-      
-      if (!result.success) {
-        const retryAfter = Math.ceil((result.reset - Date.now()) / 1000);
-        throw new RateLimitError(
-          `Rate limit exceeded. Please try again in ${retryAfter} seconds.`,
-          retryAfter,
+      try {
+        // Add explicit timeout wrapper to prevent 4.3s delay
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Rate limit check timeout")), 500)
         );
+        
+        const result = await Promise.race([
+          limiter.limit(key),
+          timeoutPromise
+        ]) as Awaited<ReturnType<typeof limiter.limit>>;
+        
+        if (!result.success) {
+          const retryAfter = Math.ceil((result.reset - Date.now()) / 1000);
+          throw new RateLimitError(
+            `Rate limit exceeded. Please try again in ${retryAfter} seconds.`,
+            retryAfter,
+          );
+        }
+        
+        c.header("X-RateLimit-Limit", result.limit.toString());
+        c.header("X-RateLimit-Remaining", result.remaining.toString());
+        c.header("X-RateLimit-Reset", result.reset.toString());
+      } catch (err) {
+        if (err instanceof RateLimitError) throw err;
+        // Fail open if Redis fails or times out (matching CRM pattern)
+        console.error("Rate limit error (fail open):", err);
       }
-      
-      // Add rate limit headers
-      c.header("X-RateLimit-Limit", result.limit.toString());
-      c.header("X-RateLimit-Remaining", result.remaining.toString());
-      c.header("X-RateLimit-Reset", result.reset.toString());
       
       await next();
       return;
     }
     
-    // Fallback to in-memory rate limiting
+    // Fallback to in-memory
     const now = Date.now();
     const windowMs = opts.windowSeconds * 1000;
     const record = inMemoryStore.get(key);
     
     if (!record || record.resetAt < now) {
-      inMemoryStore.set(key, {
-        count: 1,
-        resetAt: now + windowMs,
-      });
+      inMemoryStore.set(key, { count: 1, resetAt: now + windowMs });
       await next();
       return;
     }

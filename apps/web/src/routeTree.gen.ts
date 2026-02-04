@@ -14,8 +14,8 @@ import { Route as AppRouteImport } from "./routes/app"
 import { Route as AuthRouteImport } from "./routes/_auth"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as AppProjectsRouteImport } from "./routes/app/projects"
+import { Route as AppBillingRouteImport } from "./routes/app/billing"
 import { Route as AppAssetsRouteImport } from "./routes/app/assets"
-import { Route as ApiSplatRouteImport } from "./routes/api.$"
 import { Route as AuthSignupRouteImport } from "./routes/_auth/signup"
 import { Route as AuthLoginRouteImport } from "./routes/_auth/login"
 
@@ -43,15 +43,15 @@ const AppProjectsRoute = AppProjectsRouteImport.update({
   path: "/projects",
   getParentRoute: () => AppRoute,
 } as any)
+const AppBillingRoute = AppBillingRouteImport.update({
+  id: "/billing",
+  path: "/billing",
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAssetsRoute = AppAssetsRouteImport.update({
   id: "/assets",
   path: "/assets",
   getParentRoute: () => AppRoute,
-} as any)
-const ApiSplatRoute = ApiSplatRouteImport.update({
-  id: "/api/$",
-  path: "/api/$",
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: "/signup",
@@ -70,8 +70,8 @@ export interface FileRoutesByFullPath {
   "/productivity": typeof ProductivityRoute
   "/login": typeof AuthLoginRoute
   "/signup": typeof AuthSignupRoute
-  "/api/$": typeof ApiSplatRoute
   "/app/assets": typeof AppAssetsRoute
+  "/app/billing": typeof AppBillingRoute
   "/app/projects": typeof AppProjectsRoute
 }
 export interface FileRoutesByTo {
@@ -80,8 +80,8 @@ export interface FileRoutesByTo {
   "/productivity": typeof ProductivityRoute
   "/login": typeof AuthLoginRoute
   "/signup": typeof AuthSignupRoute
-  "/api/$": typeof ApiSplatRoute
   "/app/assets": typeof AppAssetsRoute
+  "/app/billing": typeof AppBillingRoute
   "/app/projects": typeof AppProjectsRoute
 }
 export interface FileRoutesById {
@@ -92,8 +92,8 @@ export interface FileRoutesById {
   "/productivity": typeof ProductivityRoute
   "/_auth/login": typeof AuthLoginRoute
   "/_auth/signup": typeof AuthSignupRoute
-  "/api/$": typeof ApiSplatRoute
   "/app/assets": typeof AppAssetsRoute
+  "/app/billing": typeof AppBillingRoute
   "/app/projects": typeof AppProjectsRoute
 }
 export interface FileRouteTypes {
@@ -104,8 +104,8 @@ export interface FileRouteTypes {
     | "/productivity"
     | "/login"
     | "/signup"
-    | "/api/$"
     | "/app/assets"
+    | "/app/billing"
     | "/app/projects"
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -114,8 +114,8 @@ export interface FileRouteTypes {
     | "/productivity"
     | "/login"
     | "/signup"
-    | "/api/$"
     | "/app/assets"
+    | "/app/billing"
     | "/app/projects"
   id:
     | "__root__"
@@ -125,8 +125,8 @@ export interface FileRouteTypes {
     | "/productivity"
     | "/_auth/login"
     | "/_auth/signup"
-    | "/api/$"
     | "/app/assets"
+    | "/app/billing"
     | "/app/projects"
   fileRoutesById: FileRoutesById
 }
@@ -135,7 +135,6 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   ProductivityRoute: typeof ProductivityRoute
-  ApiSplatRoute: typeof ApiSplatRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -175,19 +174,19 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AppProjectsRouteImport
       parentRoute: typeof AppRoute
     }
+    "/app/billing": {
+      id: "/app/billing"
+      path: "/billing"
+      fullPath: "/app/billing"
+      preLoaderRoute: typeof AppBillingRouteImport
+      parentRoute: typeof AppRoute
+    }
     "/app/assets": {
       id: "/app/assets"
       path: "/assets"
       fullPath: "/app/assets"
       preLoaderRoute: typeof AppAssetsRouteImport
       parentRoute: typeof AppRoute
-    }
-    "/api/$": {
-      id: "/api/$"
-      path: "/api/$"
-      fullPath: "/api/$"
-      preLoaderRoute: typeof ApiSplatRouteImport
-      parentRoute: typeof rootRouteImport
     }
     "/_auth/signup": {
       id: "/_auth/signup"
@@ -220,11 +219,13 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface AppRouteChildren {
   AppAssetsRoute: typeof AppAssetsRoute
+  AppBillingRoute: typeof AppBillingRoute
   AppProjectsRoute: typeof AppProjectsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAssetsRoute: AppAssetsRoute,
+  AppBillingRoute: AppBillingRoute,
   AppProjectsRoute: AppProjectsRoute,
 }
 
@@ -235,7 +236,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   ProductivityRoute: ProductivityRoute,
-  ApiSplatRoute: ApiSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
