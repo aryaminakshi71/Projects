@@ -30,7 +30,8 @@
     "VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY",
 
     "JWT_SECRET",
-    "WS_PORT"
+    "WS_PORT",
+    "PORT"
   ],
 
   "tasks": {

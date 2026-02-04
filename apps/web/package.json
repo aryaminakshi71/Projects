@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "SKIP_CLOUDFLARE=true vite dev",
     "dev:local": "WRANGLER_REMOTE=false vite dev",
     "dev:no-cloudflare": "SKIP_CLOUDFLARE=true vite dev",
     "dev:mock": "SKIP_CLOUDFLARE=true VITE_USE_MOCKS=true vite dev",

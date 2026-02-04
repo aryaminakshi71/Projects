@@ -94,7 +94,10 @@ export function rateLimitRedis(options: Partial<RateLimitOptions> = {}) {
         c.header("X-RateLimit-Remaining", result.remaining.toString());
         c.header("X-RateLimit-Reset", result.reset.toString());
       } catch (err) {
-        if (err instanceof RateLimitError) throw err;
+        // Check if it's a RateLimitError - use duck typing for Workers compatibility
+        if (err && typeof err === 'object' && ('name' in err && err.name === 'RateLimitError' || 'code' in err && (err as any).code === 'RATE_LIMITED')) {
+          throw err;
+        }
         // Fail open if Redis fails or times out (matching CRM pattern)
         console.error("Rate limit error (fail open):", err);
       }

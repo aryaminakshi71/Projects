@@ -34,17 +34,15 @@ export default {
   ): Promise<Response> {
     const url = new URL(request.url);
 
+    // Handle API routes - integrated API
     if (url.pathname.startsWith("/api")) {
       return api.fetch(request, env as any, ctx);
     }
 
-    // Type assertion needed because module augmentation isn't fully applied
-    // until vite dev/build generates the complete route tree
     return handler.fetch(request, {
       context: {
         cloudflare: { env, ctx },
       },
-      // Pass the request context to the server functions
     } as Parameters<typeof handler.fetch>[1]);
   },
 };

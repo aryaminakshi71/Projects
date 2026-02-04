@@ -44,11 +44,7 @@ export function createApp() {
     setSecurityHeaders(c.res.headers);
   });
 
-  // Rate limiting middleware (matching CRM/Queue/Invoicing pattern)
-  app.use("/api/*", rateLimitRedis({ limiterType: "api" }));
-  app.use("/api/auth/*", rateLimitRedis({ limiterType: "auth" }));
-
-  // Health check (non-RPC) - defined AFTER rate limiting (matching CRM/Queue/Invoicing pattern)
+  // Health check (non-RPC) - must be before rate limiting
   app.get("/api/health", (c: any) => {
     return c.json({
       status: "ok",
@@ -56,6 +52,10 @@ export function createApp() {
       version: "1.0.0",
     });
   });
+
+  // Rate limiting middleware
+  app.use("/api/*", rateLimitRedis({ limiterType: "api" }));
+  app.use("/api/auth/*", rateLimitRedis({ limiterType: "auth" }));
 
   // Direct R2 upload route
   app.post("/api/assets/upload", async (c: any) => {
