@@ -66,6 +66,31 @@
       "dependsOn": ["^build", "^typecheck"]
     },
 
+    "test": {
+      "cache": false
+    },
+
+    "test:unit": {
+      "cache": false
+    },
+
+    "test:integration": {
+      "cache": false
+    },
+
+    "test:coverage": {
+      "cache": false
+    },
+
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+
+    "test:ci": {
+      "cache": false
+    },
+
     "clean": {
       "cache": false
     },

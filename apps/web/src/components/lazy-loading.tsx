@@ -3,7 +3,8 @@
  * Provides loading skeletons and lazy loading helpers
  */
 
-import { Suspense, ComponentType, lazy } from 'react'
+import { Suspense, lazy } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 
 /**
  * Default loading skeleton for routes
@@ -43,7 +44,7 @@ export function ComponentLoadingSkeleton() {
  */
 export function withLazyLoading<P extends object>(
   Component: ComponentType<P>,
-  fallback?: React.ReactNode
+  fallback?: ReactNode
 ) {
   return function LazyComponent(props: P) {
     return (

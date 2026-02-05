@@ -9,7 +9,7 @@ import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import type { AppRouter } from "@projects/api/router";
 
-const baseURL = import.meta.env.VITE_PUBLIC_SITE_URL || "http://localhost:3001";
+const baseURL = import.meta.env.VITE_PUBLIC_SITE_URL || "http://localhost:3002";
 
 const link = new RPCLink({
   url: `${baseURL}/api/rpc`,

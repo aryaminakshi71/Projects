@@ -32,8 +32,6 @@ export function createDb(
     url = process.env.DATABASE_URL!;
   }
 
-  // Optimize Neon for Cloudflare Workers
-  neonConfig.fetchConnectionCache = true;
   
   // Connection pooling configuration
   // Note: @neondatabase/serverless uses HTTP connections, not traditional pooling

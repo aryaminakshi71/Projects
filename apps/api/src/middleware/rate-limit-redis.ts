@@ -65,6 +65,9 @@ export function rateLimitRedis(options: Partial<RateLimitOptions> = {}) {
     limiterType: "api",
     ...options,
   };
+  const shouldLogErrors =
+    process.env.NODE_ENV === "production" &&
+    process.env.RATE_LIMIT_LOG_ERRORS !== "false";
 
   return async (c: Context, next: Next) => {
     const key = opts.keyGenerator!(c);
@@ -99,7 +102,9 @@ export function rateLimitRedis(options: Partial<RateLimitOptions> = {}) {
           throw err;
         }
         // Fail open if Redis fails or times out (matching CRM pattern)
-        console.error("Rate limit error (fail open):", err);
+        if (shouldLogErrors) {
+          console.error("Rate limit error (fail open):", err);
+        }
       }
       
       await next();
