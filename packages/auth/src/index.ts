@@ -14,14 +14,15 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { organization, apiKey, openAPI } from "better-auth/plugins";
 import type { Database } from "@projects/storage";
+import { user, session, account, verification, organization as orgTable, member, invitation } from "@projects/storage/schema";
 import { createKVStorage } from "./kv-storage";
 import { createStripePlugin, createStripeClient } from "./config/stripe";
 
 export interface AuthConfig {
   /** Database instance from @projects/storage */
   db: Database;
-  /** Cloudflare KV namespace for session storage */
-  kv: KVNamespace;
+  /** Cloudflare KV namespace for session storage (optional, only for production) */
+  kv?: KVNamespace;
   /** Better Auth secret (32+ characters) */
   secret: string;
   /** Base URL for the app (e.g., https://example.com) */
@@ -86,12 +87,11 @@ export function createAuth(config: AuthConfig) {
     );
   }
 
-  return betterAuth({
+  // Build auth configuration
+  const authConfig: any = {
     database: drizzleAdapter(db, {
       provider: "pg",
-      usePlural: true,
     }),
-    secondaryStorage: createKVStorage(kv),
     secret,
     baseURL,
     basePath: "/api/auth",
@@ -149,7 +149,14 @@ export function createAuth(config: AuthConfig) {
 
     // Trusted origins
     trustedOrigins: [baseURL, ...trustedOrigins],
-  });
+  };
+
+  // Only use secondary storage if KV is properly configured (production/Cloudflare only)
+  if (kv && typeof kv.get === 'function' && typeof kv.put === 'function') {
+    authConfig.secondaryStorage = createKVStorage(kv);
+  }
+
+  return betterAuth(authConfig);
 }
 
 export type Auth = ReturnType<typeof createAuth>;

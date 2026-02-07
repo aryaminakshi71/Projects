@@ -21,12 +21,12 @@ function ProjectsPage() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Projects</h1>
+      <h1 className="text-3xl font-bold mb-6 text-foreground">Projects</h1>
       <div className="space-y-4">
         {data?.projects?.map((project: any) => (
-          <div key={project.id} className="border p-4 rounded-lg">
-            <h2 className="font-semibold">{project.name}</h2>
-            <p className="text-sm text-gray-600">{project.status} - {project.progress}%</p>
+          <div key={project.id} className="bg-card border border-border p-4 rounded-lg hover:border-primary/50 transition-colors">
+            <h2 className="font-semibold text-card-foreground">{project.name}</h2>
+            <p className="text-sm text-muted-foreground">{project.status} - {project.progress}%</p>
           </div>
         ))}
       </div>

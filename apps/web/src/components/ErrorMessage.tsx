@@ -20,11 +20,11 @@ export function ErrorMessage({ error, title = "Error" }: ErrorMessageProps) {
     typeof error === "object" && "code" in error ? error.code : undefined;
 
   return (
-    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-      <h3 className="text-red-800 font-semibold mb-2">{title}</h3>
-      <p className="text-red-700">{message}</p>
+    <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4">
+      <h3 className="text-destructive font-semibold mb-2">{title}</h3>
+      <p className="text-destructive/90">{message}</p>
       {code && (
-        <p className="text-sm text-red-600 mt-2">Error Code: {code}</p>
+        <p className="text-sm text-destructive/80 mt-2">Error Code: {code}</p>
       )}
     </div>
   );

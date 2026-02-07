@@ -1,5 +1,7 @@
-import { drizzle } from "drizzle-orm/neon-serverless";
+import { drizzle as drizzleNeon } from "drizzle-orm/neon-serverless";
+import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 import { neonConfig } from "@neondatabase/serverless";
+import { Pool } from "pg";
 import * as schema from "./schema";
 
 /**
@@ -10,14 +12,15 @@ export interface HyperdriveConnection {
 }
 
 /**
- * Create a database client optimized for Cloudflare Workers with Neon
+ * Create a database client with automatic driver selection
  *
- * In Cloudflare Workers:
- * - Use env.DATABASE.connectionString (from Hyperdrive binding)
- * - Automatically uses Neon serverless driver optimized for edge runtime
+ * In Cloudflare Workers / Production (Neon):
+ * - Uses Neon serverless driver (HTTP-based, optimized for edge)
+ * - Configured via env.DATABASE.connectionString (Hyperdrive binding)
  *
- * In local development:
- * - Use connectionString parameter or DATABASE_URL env var
+ * In local development (localhost PostgreSQL):
+ * - Uses node-postgres driver with connection pooling
+ * - Configured via DATABASE_URL env var or parameter
  */
 export function createDb(
   connectionString?: string | { connectionString: string },
@@ -32,17 +35,25 @@ export function createDb(
     url = process.env.DATABASE_URL!;
   }
 
-  
-  // Connection pooling configuration
-  // Note: @neondatabase/serverless uses HTTP connections, not traditional pooling
-  // But we can configure fetch options for better performance
-  neonConfig.pipelineConnect = false; // Disable pipelining for better compatibility
+  // Detect local PostgreSQL vs Neon/production
+  const isLocal = url.includes("localhost") || url.includes("127.0.0.1");
+
+  if (isLocal) {
+    // Use node-postgres for local development
+    const pool = new Pool({
+      connectionString: url,
+      max: 20, // Maximum pool size
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+    return drizzlePg(pool, { schema });
+  }
+
+  // Use Neon serverless for production/Cloudflare Workers
+  neonConfig.pipelineConnect = false;
   neonConfig.pipelineTLS = false;
   
-  // drizzle-orm/neon-serverless accepts connection string directly
-  // For connection pooling, Neon serverless handles it automatically
-  // Max connections are managed by Neon's serverless proxy
-  return drizzle(url, { schema });
+  return drizzleNeon(url, { schema });
 }
 
 /**

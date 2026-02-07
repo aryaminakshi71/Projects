@@ -30,10 +30,11 @@ export function FormField({
   className = "",
 }: FormFieldProps) {
   const baseInputClasses = `
-    w-full px-3 py-2 border rounded-md shadow-sm
-    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-    disabled:bg-gray-100 disabled:cursor-not-allowed
-    ${error ? "border-red-500" : "border-gray-300"}
+    w-full px-3 py-2 border rounded-md
+    focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary
+    disabled:bg-muted disabled:cursor-not-allowed
+    ${error ? "border-destructive" : "border-border"}
+    bg-background text-foreground
     ${className}
   `;
 
@@ -41,10 +42,10 @@ export function FormField({
     <div className="mb-4">
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-gray-700 mb-1"
+        className="block text-sm font-medium text-foreground mb-1"
       >
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-destructive ml-1">*</span>}
       </label>
 
       {type === "textarea" ? (
